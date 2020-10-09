@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="shortcut icon"
+      href="{{ url_for('static', filename='favicon.ico') }}">
+  <title>Tweet Emotion Detection</title>
+</head>
+
+<body>
+  <br><br><br><br>
+  <div class="container">
+    <div class="card text-center">
+      <div class="card-header">
+        <h2>Tweet Emotion Detection</h2>
+      </div>
+      <div class="card-body">
+        <h5 class="card-title">"Team Elite"</h5>
+        <p class="card-text">This project was built as a part of a hackathon, conducted by Spotle.ai.
+          As a part of this project, we are provided with a set of tweets.
+          And the task was to find a way to associate or classify a tweet with a particular emotion.</p>
+
+        <br><br>
+        <form action="{{ url_for('get_prediction') }}" method="POST" id="tweetForm">
+          <div class="form-group">
+            <label for="comment">Paste the tweet below :</label>
+            <textarea class="form-control" rows="5" id="tweet" name="tweet"></textarea>
+          </div><br><br>
+          <label for="time">Enter when the tweet was posted :</label>
+          <div class="radio" id="time">
+            <label><input type="radio" name="tod" id="Morning" value="Morning" checked>Morning</label>
+          </div>
+          <div class="radio">
+            <label><input type="radio" name="tod" id="Afternoon" value="Afternoon">Afternoon</label>
+          </div>
+          <div class="radio">
+            <label><input type="radio" name="tod" id="Night" value="Night">Night</label>
+          </div>
+          <div class="radio">
+            <label><input type="radio" name="tod" id="Midnight" value="Midnight">Midnight</label>
+          </div>
+          <div class="radio">
+            <label><input type="radio" name="tod" id="Early Morning" value="Early Morning">Early Morning</label>
+          </div>
+          <br><br>
+          <button type="submit" class="btn btn-primary">Submit</button><br>
+        </form>
+
+      </div>
+      <div class="card-footer text-muted">
+        Will upload source and project onto github soon....
+      </div>
+      <br><br>
+      <div id="result">
+
+      </div>
+    </div>
+  </div>
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+    integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+    integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script>
+
+
+    $("#tweetForm").submit(function (e) {
+      e.preventDefault();
+      $.post("/predict", {
+        "tweet": $("#tweet").val(), "tod": $("input[name=tod]:checked").val()
+      }, function (result) {
+        var data = [
+          {
+            x: Object.keys(result), y: Object.values(result),
+            type: 'bar'
+          }
+        ];
+        var layout = {
+          title: 'Probability of emotions in tweet',font: { size: 18 }};
+
+        var config = { responsive: true }
+
+        Plotly.newPlot('result', data, layout, config);
+        scrollTo(0, document.body.scrollHeight);
+      });
+    });
+
+
+
+
+
+
+
+
+
+  </script>
+</body>
+
+</html>
